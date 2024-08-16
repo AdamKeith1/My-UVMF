@@ -4,7 +4,7 @@ import re
 import lib
 
 spec = 'demo/alu.yaml'
-templates = ['agent.sv.jinja2', 'driver.sv.jinja2', 'env.sv.jinja2', 'interface.sv.jinja2']
+templates = ['agent.sv.jinja2', 'driver.sv.jinja2', 'env.sv.jinja2', 'interface.sv.jinja2', 'monitor.sv.jinja2']
 
 with open(spec, 'r') as file:
     DUT_spec = yaml.safe_load(file)

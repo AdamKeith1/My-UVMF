@@ -1,15 +1,14 @@
-
-class weird_monitor extends uvm_monitor;
-  `uvm_component_utils(weird_monitor)
+class {{ DUT.Module }}_monitor extends uvm_monitor;
+  `uvm_component_utils({{ DUT.Module }}_monitor)
   
   // --- Monitor Components --- //
-  virtual weird_interface vif;
-  weird_sequence_item item;
+  virtual {{ DUT.Module }}_interface vif;
+  {{ DUT.Module }}_sequence_item item;
   
-  uvm_analysis_port #(weird_sequence_item) monitor_port;
+  uvm_analysis_port #({{ DUT.Module }}_sequence_item) monitor_port;
   
   // --- Constructor --- //
-  function new(string name = "weird_monitor", uvm_component parent);
+  function new(string name = "{{ DUT.Module }}_monitor", uvm_component parent);
     super.new(name, parent);
     `uvm_info("MONITOR_CLASS", "Inside Constructor", UVM_HIGH)
   endfunction: new
@@ -23,7 +22,7 @@ class weird_monitor extends uvm_monitor;
     monitor_port = new("monitor_port", this);
     
     // --- Virtual Interface Failure --- //
-    if(!(uvm_config_db #(virtual weird_interface)::get(this, "*", "vif", vif))) begin
+    if(!(uvm_config_db #(virtual {{ DUT.Module }}_interface)::get(this, "*", "vif", vif))) begin
       `uvm_error("MONITOR_CLASS", "Failed to get virtual interface")
     end
     
@@ -43,27 +42,35 @@ class weird_monitor extends uvm_monitor;
     
     // --- Capture DUT Interface --- //
     forever begin
-      item = weird_sequence_item::type_id::create("item");
-      
-      wait(vif.n_rst);
-      
-      // --- Input Sample --- //
-      @(posedge vif.clk);
-      item.en  = vif.en;
-      item.foo = vif.foo;
-      item.bar = vif.bar;
-      
-      // --- Output Sample --- //
-      @(posedge vif.clk);
-      item.foo_and_bar  = vif.foo_and_bar;  
-      item.foo_or_bar   = vif.foo_or_bar;
-      item.foo_xor_bar  = vif.foo_xor_bar;
-      item.foo_nand_bar = vif.foo_nand_bar;
+      item = {{ DUT.Module }}_sequence_item::type_id::create("item");
+      {%- set ports_in = DUT.Ports.In %}
+      {%- set ports_out = DUT.Ports.Out %}
 
+      {%- set max_len_in = ports_in | map('length') | max %}
+      {%- set max_len_out = ports_out | map('length') | max %}
+      {%- set max_len = [max_len_in, max_len_out] | max %}
+
+      {%- macro pad(variable, length) -%}
+          {{- variable -}}{{ ' ' * (length - variable|length) }}
+      {%- endmacro %}
+      
+      wait(vif.{{ DUT.Ports.Active_Low_Reset }});
+
+      // --- Input Sample --- //
+      @(posedge vif.{{ DUT.Ports.Clock }});
+      {% for port in ports_in -%}
+      item.{{ pad(port, max_len) }} = vif.{{ port }};
+      {% endfor %}
+      // --- Output Sample --- //
+      @(posedge vif.{{ DUT.Ports.Clock }});
+      {% for port in ports_out -%}
+      item.{{ pad(port, max_len) }} = vif.{{ port }};
+      {% endfor %}
       // --- Send to Scoreboard --- //
       monitor_port.write(item);
+      
     end
         
   endtask: run_phase
   
-endclass: weird_monitor
+endclass: {{ DUT.Module }}_monitor
