@@ -1,0 +1,13 @@
+# --- Module --- #
+Design Under Test: alu 
+  Parameters:
+    # specify 'PARAM: Value'
+    BIT_WIDTH: 16 # specify 'PARAM: Value'
+  Ports:
+    Clock: clk
+    In:
+      opcode: 2
+      a: BIT_WIDTH
+      b: BIT_WIDTH
+    Out:
+      c: BIT_WIDTH

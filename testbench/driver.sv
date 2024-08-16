@@ -1,12 +1,12 @@
-class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item);
-  `uvm_component_utils({{ DUT.Module }}_driver)
+class alu_driver extends uvm_driver#(alu_sequence_item);
+  `uvm_component_utils(alu_driver)
   
   // --- Virtual Interface + Sequence Item --- //
-  virtual {{ DUT.Module }}_interface vif;
-  {{ DUT.Module }}_sequence_item item;
+  virtual alu_interface vif;
+  alu_sequence_item item;
   
   // --- Constructor --- //
-  function new(string name = "{{ DUT.Module }}_driver", uvm_component parent);
+  function new(string name = "alu_driver", uvm_component parent);
     super.new(name, parent);
     `uvm_info("DRIVER_CLASS", "Inside Constructor", UVM_HIGH)
   endfunction: new
@@ -17,7 +17,7 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     `uvm_info("DRIVER_CLASS", "Build Phase", UVM_HIGH)
     
     // --- Virtual Interface Failure --- //
-    if(!(uvm_config_db #(virtual {{ DUT.Module }}_interface)::get(this, "*", "vif", vif))) begin
+    if(!(uvm_config_db #(virtual alu_interface)::get(this, "*", "vif", vif))) begin
       `uvm_error("DRIVER_CLASS", "Failed to get virtual interface")
     end
     
@@ -37,7 +37,7 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     
     // --- Sequence Item Queue --- //
     forever begin
-      item = {{ DUT.Module }}_sequence_item::type_id::create("item"); 
+      item = alu_sequence_item::type_id::create("item"); 
       seq_item_port.get_next_item(item);
       drive(item);
       seq_item_port.item_done();
@@ -46,19 +46,13 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
   endtask: run_phase
   
   // --- Drive Virtual Interface --- //
-  task drive({{ DUT.Module }}_sequence_item item);
-    {%- set ports = DUT.Ports.In %}
+  task drive(alu_sequence_item item);
 
-    {%- set max_len = ports | map('length') | max %}
+    @(posedge vif.clk);
+    vif.opcode <= item.opcode
+    vif.a      <= item.a
+    vif.b      <= item.b
     
-    {%- macro pad(variable, length) -%}
-        {{- variable -}}{{ ' ' * (length - variable|length) }}
-    {%- endmacro %}
-
-    @(posedge vif.{{ DUT.Ports.Clock }});
-    {% for port in ports -%}
-    vif.{{ pad(port, max_len) }} <= item.{{ port }}
-    {% endfor %}
   endtask: drive
   
-endclass: {{ DUT.Module }}_driver
+endclass: alu_driver
