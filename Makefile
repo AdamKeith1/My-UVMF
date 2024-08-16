@@ -25,6 +25,8 @@ startup:
 
 .PHONY: run
 run:
+	make clean
+
 	@echo "Creating test-bench directory..."
 	@mkdir testbench
 	@echo $${runText}
