@@ -49,9 +49,10 @@ class alu_driver extends uvm_driver#(alu_sequence_item);
   task drive(alu_sequence_item item);
 
     @(posedge vif.clk);
-    vif.opcode <= item.opcode
-    vif.a      <= item.a
-    vif.b      <= item.b
+    vif.n_rst  <= item.n_rst;
+    vif.opcode <= item.opcode;
+    vif.a      <= item.a;
+    vif.b      <= item.b;
     
   endtask: drive
   

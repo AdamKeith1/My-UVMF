@@ -4,6 +4,7 @@ DUT:
         BIT_WIDTH: 16 # specify 'PARAM: Value'
     Ports:
         Clock: clk
+        Active_Low_Reset: n_rst
         In: 
             opcode: '[1:0]'
             a: '[(BIT_WIDTH-1):0]'

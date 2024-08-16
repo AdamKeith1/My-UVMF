@@ -49,15 +49,19 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
   task drive({{ DUT.Module }}_sequence_item item);
     {%- set ports = DUT.Ports.In %}
 
-    {%- set max_len = ports | map('length') | max %}
+    {%- set max_len_in = ports | map('length') | max %}
+    {%- set max_len_rst = DUT.Ports.Active_Low_Reset | length %}
+
+    {%- set max_len = [max_len_in, max_len_rst] | max %}
     
     {%- macro pad(variable, length) -%}
         {{- variable -}}{{ ' ' * (length - variable|length) }}
     {%- endmacro %}
 
     @(posedge vif.{{ DUT.Ports.Clock }});
+    vif.{{ pad(DUT.Ports.Active_Low_Reset, max_len) }} <= item.{{ DUT.Ports.Active_Low_Reset }};
     {% for port in ports -%}
-    vif.{{ pad(port, max_len) }} <= item.{{ port }}
+    vif.{{ pad(port, max_len) }} <= item.{{ port }};
     {% endfor %}
   endtask: drive
   
