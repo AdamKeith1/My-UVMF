@@ -13,5 +13,10 @@ DUT:
             c: '[(BIT_WIDTH-1):0]'
 
 Stimulus:
+    Constrained_Signals:
+        n_rst:
+        opcode:
     Sequences:
+
+Path:
         
