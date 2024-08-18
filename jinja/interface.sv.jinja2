@@ -15,11 +15,11 @@ interface {{ DUT.Module }}_interface(input logic {{ DUT.Ports.Clock }});
   logic {{ pad(bit_width, max_len) }} {{ signal }};
   {% endfor -%}
 
-  {# Blank Line #}
+  {# Blank Line - Formatting #}
   // --- Outputs --- //
   {% for signal, bit_width in ports_out.items() -%}
   logic {{ pad(bit_width, max_len) }} {{ signal }};
   {% endfor -%}
 
-  {# Blank Line #}
+  {# Blank Line - Formatting #}
 endinterface: {{ DUT.Module }}_interface

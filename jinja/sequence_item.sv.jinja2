@@ -1,29 +1,41 @@
-class weird_sequence_item extends uvm_sequence_item;
-  `uvm_object_utils(weird_sequence_item)
+class {{ DUT.Module }}_sequence_item extends uvm_sequence_item;
+  `uvm_object_utils({{ DUT.Module }}_sequence_item)
+  {%- set ports_in = DUT.Ports.In %}
+  {%- set ports_out = DUT.Ports.Out %}
+
+  {%- set max_len_in = ports_in.values() | map('length') | max %}
+  {%- set max_len_out = ports_out.values() | map('length') | max %}
+
+  {%- macro pad(variable, length) -%}
+      {{- variable -}}{{ ' ' * (length - variable|length) }}
+  {%- endmacro %}
 
   // --- Control Signals --- //
-  rand logic n_rst;
-  rand logic en;
-  
-  // --- Semi-Randomized Inputs --- //
-  randc logic [3:0] foo;
-  randc logic [3:0] bar;
-  
-  // --- Outputs --- //
-  logic [3:0] foo_and_bar;
-  logic [3:0] foo_or_bar;
-  logic [3:0] foo_xor_bar;
-  logic [3:0] foo_nand_bar;
-  
-  // --- Control Signal PDF --- ///
-  constraint ctrl_sig_dist {
-    n_rst dist {0:/5, 1:/95};
-    en    dist {0:/5, 1:/95};
-  }
+  rand logic {{ DUT.Ports.Active_Low_Reset }}
 
+  // --- Randomized Inputs --- //
+  {% for signal, bit_width in ports_in.items() -%}
+  randc logic {{ pad(bit_width, max_len_in) }} {{ signal }};
+  {% endfor -%}
+
+  {# Blank Line - Formatting #}
+  // --- Outputs --- //
+  {% for signal, bit_width in ports_out.items() -%}
+  logic {{ pad(bit_width, max_len_out) }} {{ signal }};
+  {% endfor -%}
+
+  {# Blank Line - Formatting #}
+  // --- Constraints --- //
+  {% for signal in Stimulus.Constrained_Signals -%}
+  {% raw %}constraint {% endraw %}{{ signal }}{% raw %}_constraint {
+    {% endraw %}{{ signal }}{% raw %} {};
+  }{% endraw %}
+
+  {% endfor -%}
+  
   // --- Constructor --- //
-  function new(string name = "weird_sequence_item");
+  function new(string name = "{{ DUT.Module }}_sequence_item");
     super.new(name);
   endfunction: new
 
-endclass: weird_sequence_item
+endclass: {{ DUT.Module }}_sequence_item
