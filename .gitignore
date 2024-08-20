@@ -1,3 +1,3 @@
-testbench
-__pycache__
+testbench/*
+__pycache__/*
 todo
