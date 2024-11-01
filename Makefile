@@ -59,6 +59,10 @@ Generating UVM testbench...
 endef
 export runText
 
+.PHONY: help
+help:
+	@echo $${helpText}
+
 .PHONY: clean
 clean:
 	rm -rf testbench

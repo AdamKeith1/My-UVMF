@@ -1,3 +1,10 @@
+{#`ifndef {{ DUT.Module }} - NEED ALL CAPS FOR PARAM#}
+// --- Include --- //
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
+// --- Transaction --- //
 class {{ DUT.Module }}_sequence_item extends uvm_sequence_item;
   `uvm_object_utils({{ DUT.Module }}_sequence_item)
   {%- set ports_in = DUT.Ports.In %}

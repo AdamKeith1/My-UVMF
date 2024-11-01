@@ -19,4 +19,10 @@ Stimulus:
     Sequences:
 
 Path:
+
+
+Dependencies:
+    Include:
+        alu_pkg.svh:
+    Import:
         
