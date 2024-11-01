@@ -1,3 +1,9 @@
+// --- Include --- //
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
+// --- Monitor --- //
 class {{ DUT.Module }}_monitor extends uvm_monitor;
   `uvm_component_utils({{ DUT.Module }}_monitor)
   
