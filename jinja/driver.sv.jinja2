@@ -1,3 +1,8 @@
+// --- Include --- //
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
 class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item);
   `uvm_component_utils({{ DUT.Module }}_driver)
   

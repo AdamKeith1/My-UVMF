@@ -9,7 +9,7 @@ templates = [
     'agent.sv.jinja2', 
     'driver.sv.jinja2', 
     'env.sv.jinja2', 
-    'interface.sv.jinja2', 
+    # 'interface.sv.jinja2', 
     'monitor.sv.jinja2', 
     'sequence_item.sv.jinja2'
 ]
