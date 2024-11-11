@@ -1,10 +1,14 @@
 interface {{ DUT.Module }}_interface(input logic {{ DUT.Ports.Clock }});
+  {%- set ports_rst = DUT.Ports.Active_Low_Reset%}
   {%- set ports_in = DUT.Ports.In %}
   {%- set ports_out = DUT.Ports.Out %}
 
   {%- set max_len_in = ports_in.values() | map('length') | max %}
   {%- set max_len_out = ports_out.values() | map('length') | max %}
   {%- set max_len = [max_len_in, max_len_out] | max %}
+
+  // --- Reset --- //
+  logic {{ ports_rst }};
 
   {%- macro pad(variable, length) -%}
       {{- variable -}}{{ ' ' * (length - variable|length) }}

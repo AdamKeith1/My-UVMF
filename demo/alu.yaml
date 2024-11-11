@@ -16,9 +16,16 @@ Stimulus:
     Constrained_Signals:
         n_rst:
         opcode:
+    # Sequnces with instance names
     Sequences:
+        reset: 'reset_tx'
+        base: 'base_tx'
 
 Path:
+
+Testbench:
+    Clock: '4'
+    vcd: 'sim'
 
 Dependencies:
     Include:

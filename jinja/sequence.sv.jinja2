@@ -1,51 +1,33 @@
-// --- Reset Packet --- //
-class weird_base_sequence extends uvm_sequence;
-  `uvm_object_utils(weird_base_sequence)
-  
-  weird_sequence_item reset_pkt;
-  
-  // --- Constructor --- //
-  function new(string name= "weird_base_sequence");
-    super.new(name);
-    `uvm_info("BASE_SEQ", "Inside Constructor", UVM_HIGH)
-  endfunction
-  
-  // --- Body Task --- //
-  task body();
-    `uvm_info("BASE_SEQ", "Inside body task", UVM_HIGH)
-    
-    // --- Randomize With Reset --- //
-    reset_pkt = weird_sequence_item::type_id::create("reset_pkt");
-    start_item(reset_pkt);
-    reset_pkt.randomize() with {n_rst==0;};
-    finish_item(reset_pkt);
-        
-  endtask: body
-  
-endclass: weird_base_sequence
+// --- Include --- //
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
+{%- set seqs = Stimulus.Sequences %}
+{% for seq, seq_name in seqs.items() -%}
+// --- Sequence Type --- //
+class {{ DUT.Module }}_{{ seq }}_sequence extends uvm_sequence;
+  `uvm_object_utils({{ DUT.Module }}_{{ seq }}_sequence)
 
-// --- Normal Packet --- //
-class weird_test_sequence extends weird_base_sequence;
-  `uvm_object_utils(weird_test_sequence)
-  
-  weird_sequence_item item;
+  {{ DUT.Module }}_sequence_item {{ seq_name }};
   
   // --- Constructor --- //
-  function new(string name= "weird_test_sequence");
+  function new(string name= "{{ DUT.Module }}_{{ seq }}_sequence");
     super.new(name);
-    `uvm_info("TEST_SEQ", "Inside Constructor", UVM_HIGH)
+    `uvm_info("{{ seq }}_SEQ", "Inside Constructor", UVM_HIGH)
   endfunction
-  
+
   // --- Body Task --- //
   task body();
-    `uvm_info("TEST_SEQ", "Inside body task", UVM_HIGH)
+    `uvm_info("{{ seq }}_SEQ", "Inside body task", UVM_HIGH)
     
-    // --- Randomize --- //
-    item = weird_sequence_item::type_id::create("item");
-    start_item(item);
-    item.randomize();
-    finish_item(item);
+    // --- Create Transaction --- //
+    {{ seq_name }} = {{ DUT.Module }}_sequence_item::type_id::create("{{ seq_name }}");
+    start_item({{ seq_name }});
+    // {{ seq_name }}.randomize() with {};
+    finish_item({{ seq_name }});
         
   endtask: body
-  
-endclass: weird_test_sequence
+
+endclass : {{ DUT.Module }}_sequence_item
+{% endfor %}

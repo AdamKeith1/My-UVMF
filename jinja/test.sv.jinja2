@@ -1,16 +1,22 @@
-class weird_test extends uvm_test;
-  `uvm_component_utils(weird_test)
+// --- Include --- //
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
+class {{ DUT.Module }}_test extends uvm_test;
+  `uvm_component_utils({{ DUT.Module }}_test)
 
   // --- Test Components --- //
-  weird_env env;
-  weird_base_sequence reset_seq;
-  weird_test_sequence test_seq;
+  {{ DUT.Module }}_env env;
+  {%- for seq, seq_name in Stimulus.Sequences.items() %}
+    {{ DUT.Module }}_{{ seq }}_sequence {{ seq_name }};
+  {%- endfor %}
 
-  // --- Clocking --- //
-  parameter CLK_PERIOD = 4;
+  // --- Clock --- //
+  parameter CLK_PERIOD = {{ Testbench.Clock }};
 
   // --- Constructor --- //
-  function new(string name = "weird_test", uvm_component parent);
+  function new(string name = "{{ DUT.Module }}_test", uvm_component parent);
     super.new(name, parent);
     `uvm_info("TEST_CLASS", "Inside Constructor", UVM_HIGH)
   endfunction: new
@@ -21,14 +27,14 @@ class weird_test extends uvm_test;
     `uvm_info("TEST_CLASS", "Build Phase", UVM_HIGH)
 
     // --- Build Environment --- //
-    env = weird_env::type_id::create("env", this);
+    env = {{ DUT.Module }}_env::type_id::create("env", this);
 
   endfunction: build_phase
 
   // --- Connect Phase --- //
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    `uvm_info("TEST_CLASS", "Connect Phase!", UVM_HIGH)
+    `uvm_info("TEST_CLASS", "Connect Phase", UVM_HIGH)
 
   endfunction: connect_phase
 
@@ -39,21 +45,11 @@ class weird_test extends uvm_test;
 
     phase.raise_objection(this);
 
-    // --- Reset Sequence - to prime DUT --- //
-    reset_seq = weird_base_sequence::type_id::create("reset_seq");
-    reset_seq.start(env.agnt.seqr);
-    #(2 * CLK_PERIOD);
-
-    // --- Normal Operation --- //
-    repeat(50 * CLK_PERIOD) begin
-      // --- Test Sequence --- //
-      test_seq = weird_test_sequence::type_id::create("test_seq");
-      test_seq.start(env.agnt.seqr);
-      #(2 * CLK_PERIOD);
-    end
+      // --- Test Procedure --- //
+      // User fills in 
     
     phase.drop_objection(this);
 
   endtask: run_phase
 
-endclass: weird_test
+endclass : {{ DUT.Module }}_test

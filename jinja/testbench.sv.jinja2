@@ -15,42 +15,38 @@ import uvm_pkg::*;
 `include "scoreboard.sv"
 `include "env.sv"
 `include "test.sv"
-
+{% for file in Dependencies.Include -%}
+`include "{{ file }}"
+{% endfor -%}
+{# Blank Line #}
 module top;
   
-  // --- Sim Clock --- //
-  logic clk;
-  weird_interface intf(.clk(clk));
-  parameter CLK_PERIOD = 4;
-  
+  // --- Sim Clock --- // 
+  logic {{ DUT.Ports.Clock }};
+  {{ DUT.Module }}_interface {{ DUT.Module }}_intf(.{{ DUT.Ports.Clock }}({{ DUT.Ports.Clock }}));
+  parameter CLK_PERIOD = {{ Testbench.Clock }};
+
   // --- DUT Instance --- //
-  weird dut(
-    .clk          (intf.clk) ,
-    .n_rst        (intf.n_rst),
-    .en           (intf.en),
-    .foo          (intf.foo),
-    .bar          (intf.bar),
-    .foo_and_bar  (intf.foo_and_bar),
-    .foo_or_bar   (intf.foo_or_bar),
-    .foo_xor_bar  (intf.foo_xor_bar),
-    .foo_nand_bar (intf.foo_nand_bar)
+  {{ DUT.Module }} DUT(
+    // User fills in 
+    // Will be fixed post 1.0
   );
   
   // --- Interface --- //
   initial begin
-    uvm_config_db #(virtual weird_interface)::set(null, "*", "vif", intf);
+    uvm_config_db #(virtual {{ DUT.Module }}_interface)::set(null, "*", "vif", {{ DUT.Module }}_intf);
   end
   
   // --- Start Test --- //
   initial begin
-    run_test("weird_test");
+    run_test("{{ DUT.Module }}_test");
   end
   
   // --- Clock Generation --- //
   always begin: CLK_GEN
-      clk = 1'b1;
+      {{ DUT.Ports.Clock }} = 1'b1;
       #(0.5 * CLK_PERIOD);
-      clk = 1'b0;
+      {{ DUT.Ports.Clock }} = 1'b0;
       #(0.5 * CLK_PERIOD);
   end
 
