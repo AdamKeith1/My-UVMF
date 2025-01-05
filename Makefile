@@ -60,11 +60,11 @@ clean:
 
 .PHONY: startup
 startup:
-	pip install pyyaml
-	pip install jinja2
+	pip3 install pyyaml
+	pip3 install jinja2
 
 .PHONY: run
-run:
+run: startup
 	make clean
 
 	@echo "Creating test-bench directory..."

@@ -27,7 +27,7 @@ interface alu_if;
         output out,
         output negative,
         output overflow,
-        output zero,
+        output zero
     );
 
 endinterface
