@@ -1,5 +1,9 @@
 DUT:
-    Module: alu 
+    Module: alu
+    Dependencies:
+        Packages: 
+            alu_pkg.svh: alu_pkg
+        Includes:
     Parameters: 
         BIT_WIDTH: 16 # specify 'PARAM: Value'
     Ports:
@@ -12,23 +16,10 @@ DUT:
         Out: 
             c: '[(BIT_WIDTH-1):0]'
 
-Stimulus:
-    Constrained_Signals:
-        n_rst:
-        opcode:
-    # Sequnces with instance names
-    Sequences:
-        reset: 'reset_tx'
-        base: 'base_tx'
-
-Path:
-
 Testbench:
-    Clock: '4'
-    vcd: 'sim'
+    Modport:
 
-Dependencies:
-    Include:
-        alu_pkg.svh:
-    Import:
+Output_Path: alu/MyUVMF/
+
+
         
