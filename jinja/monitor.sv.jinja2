@@ -88,7 +88,7 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
       wait(vif.{{ DUT.Ports.Active_Low_Reset }});
 
       // --- Input Sample --- //
-      item.{{ pad(DUT.Ports.Active_Low_Reset, max_len) }} <= vif.{{ DUT.Ports.Active_Low_Reset }};
+      item.{{ pad(DUT.Ports.Active_Low_Reset, max_len) }} = vif.{{ DUT.Ports.Active_Low_Reset }};
 
       @(posedge vif.{{ DUT.Ports.Clock }});
       {% for port in ports_in -%}
