@@ -1,25 +1,44 @@
-// --- Include --- //
-{% for file in Dependencies.Include -%}
+/*
+  Module        : {{ DUT.Module }}
+  UMV Component : test
+  Author        : 
+*/
+
+`ifndef {{ DUT.Module | upper }}_TEST_SV
+`define {{ DUT.Module | upper }}_TEST_SV
+
+// --- UVM --- //
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+// --- Packages --- //
+{% if DUT.Dependencies.Packages -%}
+    {% for file, package in DUT.Dependencies.Packages.items() -%}
 `include "{{ file }}"
-{% endfor -%}
+import {{ package }}::*;
+    {% endfor -%}
+{% endif %}
+// --- Includes --- //
+`include "sequence_item.sv"
+`include "interface.sv"
+{% if DUT.Dependencies.Includes -%}
+    {% for include in DUT.Dependencies.Includes -%}
+`include "{{ include }}"
+    {% endfor -%}
+{% endif -%}
 {# Blank Line #}
+// --- Test --- //
 class {{ DUT.Module }}_test extends uvm_test;
   `uvm_component_utils({{ DUT.Module }}_test)
 
   // --- Test Components --- //
   {{ DUT.Module }}_env env;
-  {%- for seq, seq_name in Stimulus.Sequences.items() %}
-    {{ DUT.Module }}_{{ seq }}_sequence {{ seq_name }};
-  {%- endfor %}
-
-  // --- Clock --- //
-  parameter CLK_PERIOD = {{ Testbench.Clock }};
 
   // --- Constructor --- //
   function new(string name = "{{ DUT.Module }}_test", uvm_component parent);
     super.new(name, parent);
     `uvm_info("TEST_CLASS", "Inside Constructor", UVM_HIGH)
-  endfunction: new
+  endfunction : new
   
   // --- Build Phase --- //
   function void build_phase(uvm_phase phase);
@@ -29,14 +48,7 @@ class {{ DUT.Module }}_test extends uvm_test;
     // --- Build Environment --- //
     env = {{ DUT.Module }}_env::type_id::create("env", this);
 
-  endfunction: build_phase
-
-  // --- Connect Phase --- //
-  function void connect_phase(uvm_phase phase);
-    super.connect_phase(phase);
-    `uvm_info("TEST_CLASS", "Connect Phase", UVM_HIGH)
-
-  endfunction: connect_phase
+  endfunction : build_phase
 
   // --- Test Procedure --- //
   task run_phase (uvm_phase phase);
@@ -50,6 +62,8 @@ class {{ DUT.Module }}_test extends uvm_test;
     
     phase.drop_objection(this);
 
-  endtask: run_phase
+  endtask : run_phase
 
 endclass : {{ DUT.Module }}_test
+
+`endif
