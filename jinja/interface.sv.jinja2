@@ -4,6 +4,9 @@
   Author        : 
 */
 
+`ifndef {{ DUT.Module | upper }}_INTERFACE_SV
+`define {{ DUT.Module | upper }}_INTERFACE_SV
+
 // --- Packages --- //
 {% if DUT.Dependencies.Packages -%}
     {% for file, package in DUT.Dependencies.Packages.items() -%}
@@ -48,3 +51,5 @@ interface {{ DUT.Module }}_if (input logic {{ DUT.Ports.Clock }});
 
   {# Blank Line - Formatting #}
 endinterface : {{ DUT.Module }}_if
+
+`endif

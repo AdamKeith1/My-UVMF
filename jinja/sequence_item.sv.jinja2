@@ -39,7 +39,7 @@ class {{ DUT.Module }}_sequence_item extends uvm_sequence_item;
   {%- endmacro %}
 
   // --- Control Signals --- //
-  rand logic {{ DUT.Ports.Active_Low_Reset }}
+  rand logic {{ DUT.Ports.Active_Low_Reset }};
 
   // --- Randomized Inputs --- //
   {% for signal, bit_width in ports_in.items() -%}
@@ -60,3 +60,5 @@ class {{ DUT.Module }}_sequence_item extends uvm_sequence_item;
   endfunction : new
 
 endclass : {{ DUT.Module }}_sequence_item
+
+`endif

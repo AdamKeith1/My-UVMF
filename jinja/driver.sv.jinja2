@@ -47,7 +47,7 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     `uvm_info("DRIVER_CLASS", "Build Phase", UVM_HIGH)
     
     // --- Virtual Interface Failure --- //
-    if(!(uvm_config_db #(virtual {{ DUT.Module }}_interface)::get(this, "*", "vif", vif))) begin
+    if(!(uvm_config_db #(virtual {{ DUT.Module }}_if)::get(this, "*", "vif", vif))) begin
       `uvm_error("DRIVER_CLASS", "Failed to get virtual interface")
     end
     
@@ -85,6 +85,8 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     {% for port in ports -%}
     vif.{{ pad(port, max_len) }} <= item.{{ port }};
     {% endfor %}
-  endtask: drive
+  endtask : drive
   
 endclass : {{ DUT.Module }}_driver
+
+`endif

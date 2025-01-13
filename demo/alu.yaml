@@ -11,10 +11,13 @@ DUT:
         Active_Low_Reset: n_rst
         In: 
             opcode: '[1:0]'
-            a: '[(BIT_WIDTH-1):0]'
-            b: '[(BIT_WIDTH-1):0]'
+            a: '[(DATA_W-1):0]'
+            b: '[(DATA_W-1):0]'
         Out: 
-            c: '[(BIT_WIDTH-1):0]'
+            out: '[(DATA_W-1):0]'
+            negative: ''
+            overflow: ''
+            zero: ''
 
 Testbench:
     Modport:

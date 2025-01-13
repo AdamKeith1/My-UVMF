@@ -32,7 +32,7 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
   `uvm_component_utils({{ DUT.Module }}_monitor)
   
   // --- Monitor Components --- //
-  virtual {{ DUT.Module }}_interface vif;
+  virtual {{ DUT.Module }}_if vif;
   {{ DUT.Module }}_sequence_item item;
   
   uvm_analysis_port #({{ DUT.Module }}_sequence_item) monitor_port;
@@ -52,7 +52,7 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
     monitor_port = new("monitor_port", this);
     
     // --- Virtual Interface Failure --- //
-    if(!(uvm_config_db #(virtual {{ DUT.Module }}_interface)::get(this, "*", "vif", vif))) begin
+    if(!(uvm_config_db #(virtual {{ DUT.Module }}_if)::get(this, "*", "vif", vif))) begin
       `uvm_error("MONITOR_CLASS", "Failed to get virtual interface")
     end
     
@@ -76,6 +76,7 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
       {%- set ports_in = DUT.Ports.In %}
       {%- set ports_out = DUT.Ports.Out %}
 
+      {%- set max_len_rst = DUT.Ports.Active_Low_Reset | length %}
       {%- set max_len_in = ports_in | map('length') | max %}
       {%- set max_len_out = ports_out | map('length') | max %}
       {%- set max_len = [max_len_in, max_len_out] | max %}
@@ -87,6 +88,8 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
       wait(vif.{{ DUT.Ports.Active_Low_Reset }});
 
       // --- Input Sample --- //
+      item.{{ pad(DUT.Ports.Active_Low_Reset, max_len) }} <= vif.{{ DUT.Ports.Active_Low_Reset }};
+
       @(posedge vif.{{ DUT.Ports.Clock }});
       {% for port in ports_in -%}
       item.{{ pad(port, max_len) }} = vif.{{ port }};
@@ -105,3 +108,5 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
   endtask : run_phase
   
 endclass : {{ DUT.Module }}_monitor
+
+`endif
