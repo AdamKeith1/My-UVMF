@@ -9,9 +9,7 @@ This is essentially a lightweigth version of UVMF that eliminates the repetitive
 User adds DUT and testbench specs to YAML file. Then generate.py makes the UVM testbench files.
 
 ## Version
-Version        - NA
-
-Version in Dev - 1.0
+Version        - 1.0
 
 ## Release Outline
 ### 1.0 
