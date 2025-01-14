@@ -5,7 +5,7 @@ DUT:
             alu_pkg.svh: alu_pkg
         Includes:
     Parameters: 
-        BIT_WIDTH: 16 # specify 'PARAM: Value'
+        BIT_WIDTH: 16
     Ports:
         Clock: clk
         Active_Low_Reset: n_rst

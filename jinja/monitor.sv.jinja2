@@ -68,7 +68,7 @@ class {{ DUT.Module }}_monitor extends uvm_monitor;
   // --- Run Phase --- //
   task run_phase (uvm_phase phase);
     super.run_phase(phase);
-    `uvm_info("MONITOR_CLASS", "Inside Run Phase!", UVM_HIGH)
+    `uvm_info("MONITOR_CLASS", "Run Phase", UVM_HIGH)
     
     // --- Capture DUT Interface --- //
     forever begin
