@@ -1,44 +1,53 @@
 # My-UVMF
 
 ## Description
-Took this on as a personal project to better learn UVM as well as creating open source verification software. This is very similar to UVMF, although to better learn UVM I am developing it without the aid of looking at how UVMF is implemented. 
 
-This is essentially a lightweigth version of UVMF that eliminates the repetitive slog work associated with developing a UVM testbench.
+This is a rendition of MyUVMF that I am developing as a sort of intermediary between industry level (UVMF) and bare bones UVM testbench development from scratch. It takes DUT-centric YAML and then generates the UVM scaffolding.
+
+This acheives two things...
+
+    1. Consistent naming convention and reduced build/run errors
+
+    2. Automated tesbench development to speed up verification process
+
+This tool will be relaesed in versions and hte first few versions will be very ad-hoc. The idea is that this sits in your project repo and then you customize its flow based on your needs.
+
+* See how it is implemented in my project - LOROF - on my GitHub profile
+
+---
+
+## Version
+
+Version : 1.0
+
+This version of MyUVMF generates a generic UVM architecture and connects the components. What the user still needs to do in this verion...
+
+    - Add constraints to the stimulus
+    - Add custom typedefs if used
+    - Create test seqeunces
+    - Create scoreboards (beyond scaffolding)
+    - Create test procedure
+    - Instantiate DUT in testbench and other testbench features
+
+This seems like a lot, but all of this is more of the brain work that verification engineers should be doing instead of spending extra time creating all of the redundant UVM scaffolding. 
+
+---
 
 ### How it works
 User adds DUT and testbench specs to YAML file. Then generate.py makes the UVM testbench files.
 
-## Version
-Version        - 1.0
 
 ## Release Outline
-### 1.0 
-Should generate simple UVM scaffolding based on the YAML spec file. Would support a small to medium sized module (the demo will use an ALU).
 
-What MyUVMF does...
-
-- Generates all UVM architecture components with their build, connect and run phases
-
-- Creates and connects virtual interface and all analysis ports
-
-What the user has to do...
-
-- Create test procedure in test.sv
-
-- Fill in sequence 'randomize with' constraints
-
-- Fill in scoreboard compare task
-
-- Connect DUT in testbench (will be fixed with more robust interface support)
+- 1.00 
+    - Generic UVM testbench scaffolding
+    - Creates single agent + interface
 
 
-### Next Releases - Outline
+#### Next Releases
 
 - 2.0 
-    - bigger focus on cleaning up the implementation to make it more of an actual software package
-    - more testbench and verification support
-    - more support for includes and packages
-
-- 3.0
-    - more complex timing support
-    - support for larger designs (ie multi-agent architectures)
+    - Multi-agent support
+    - Typedefs
+    - Increased YAML features
+---
