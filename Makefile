@@ -4,7 +4,6 @@ SPEC := demo/alu.yaml
 # Detect the operating system
 UNAME_S := $(shell uname -s)
 
-# Set variables based on the OS
 ifeq ($(UNAME_S), Linux)
 	PIP    = pip3
 	PYTHON = python3
