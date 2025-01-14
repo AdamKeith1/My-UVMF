@@ -1,18 +1,19 @@
-`include "alu_interface.svh"
 `include "alu_pkg.svh"
+import alu_pkg::*;
 
-/*
-    - Yes typically an ALU is pure comb but for demo 
-      I went ahead and clocked it so that feature is shown.
-*/
-
-module alu(
-    input logic clk,
-    input logic n_rst,
-    alu_if      aluif
+module alu (
+    input  logic    clk,
+    input  logic    n_rst,
+    input  data_t   a,
+    input  data_t   b,
+    input  opcode_t opcode,
+    output data_t   out,
+    output logic    negative,
+    output logic    overflow,
+    output logic    zero
 );
     // --- ALU Package -- //
-    import alu_pkg::*; // error?
+    import alu_pkg::*;
 
     // --- Logic --- //
     data_t result, nxt_result;
@@ -28,20 +29,20 @@ module alu(
 
     // --- Comb Logic --- //
     always_comb begin
-        case(aluif.opcode)
-            ALU_ADD : nxt_result = aluif.a +  aluif.b;
-            ALU_SUB : nxt_result = aluif.a -  aluif.b;
-            ALU_AND : nxt_result = aluif.a &  aluif.b;
-            ALU_XOR : nxt_result = aluif.a ^  aluif.b;
-            ALU_SLL : nxt_result = aluif.a << aluif.b;
-            ALU_OR  : nxt_result = aluif.a |  aluif.b;
+        case(opcode)
+            ALU_ADD : nxt_result = a +  b;
+            ALU_SUB : nxt_result = a -  b;
+            ALU_AND : nxt_result = a &  b;
+            ALU_XOR : nxt_result = a ^  b;
+            ALU_SLL : nxt_result = a << b;
+            ALU_OR  : nxt_result = a |  b;
             default : nxt_result = '0;
         endcase
     end
 
     // --- Assign Ouput --- //
-    assign auif.out      = result;
-    assign auif.zero     = (result == '0);
-    assign auif.negative = (result[DATA_W-1] == 1'b1);
+    assign out      = result;
+    assign zero     = (result == '0);
+    assign negative = (result[DATA_W-1] == 1'b1);
 
 endmodule

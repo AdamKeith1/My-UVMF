@@ -1,23 +1,20 @@
 /*
-  Module        : {{ DUT.Module }}
+  Module        : alu
   UMV Component : testbench
-  Author        : 
+  Author        : Adam Keith
 */
 
-`ifndef {{ DUT.Module | upper }}_TESTBENCH_SV
-`define {{ DUT.Module | upper }}_TESTBENCH_SV
+`ifndef ALU_TESTBENCH_SV
+`define ALU_TESTBENCH_SV
 
 // --- UVM --- //
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 
 // --- Packages --- //
-{% if DUT.Dependencies.Packages -%}
-    {% for file, package in DUT.Dependencies.Packages.items() -%}
-`include "{{ file }}"
-import {{ package }}::*;
-    {% endfor -%}
-{% endif %}
+`include "alu_pkg.svh"
+import alu_pkg::*;
+    
 // --- Includes --- //
 `include "interface.sv"
 `include "sequence_item.sv"
@@ -29,42 +26,46 @@ import {{ package }}::*;
 `include "scoreboard.sv"
 `include "env.sv"
 `include "test.sv"
-{% if DUT.Dependencies.Includes -%}
-    {% for include in DUT.Dependencies.Includes -%}
-`include "{{ include }}"
-    {% endfor -%}
-{% endif -%}
-{# Blank Line #}
+
 `timescale 1ns/1ns
-{# Blank Line #}
+
 module top;
   
   // --- Sim Clock --- // 
-  logic {{ DUT.Ports.Clock }};
-  {{ DUT.Module }}_if {{ DUT.Module }}_intf(.{{ DUT.Ports.Clock }}({{ DUT.Ports.Clock }}));
-  parameter CLK_PERIOD = ;
+  logic clk;
+  alu_if alu_intf(.clk(clk));
+  parameter CLK_PERIOD = 4;
 
   // --- DUT Instance --- //
-  {{ DUT.Module }} DUT(
+  alu DUT(
     // User fills in 
     // Will be added feature in later release
+    .clk(alu_intf.clk),
+    .n_rst(alu_intf.n_rst),
+    .a(alu_intf.a),
+    .b(alu_intf.b),
+    .opcode(alu_intf.opcode),
+    .out(alu_intf.out),
+    .negative(alu_intf.negative),
+    .overflow(alu_intf.overflow),
+    .zero(alu_intf.zero)
   );
   
   // --- Interface --- //
   initial begin : VIF
-    uvm_config_db #(virtual {{ DUT.Module }}_if)::set(null, "*", "vif", {{ DUT.Module }}_intf);
+    uvm_config_db #(virtual alu_if)::set(null, "*", "vif", alu_intf);
   end
   
   // --- Start Test --- //
   initial begin : TEST
-    run_test("{{ DUT.Module }}_test");
+    run_test("alu_test");
   end
   
   // --- Clock Generation --- //
   always begin : CLK_GEN
-      {{ DUT.Ports.Clock }} = 1'b1;
+      clk = 1'b1;
       #(0.5 * CLK_PERIOD);
-      {{ DUT.Ports.Clock }} = 1'b0;
+      clk = 1'b0;
       #(0.5 * CLK_PERIOD);
   end
 
@@ -73,6 +74,12 @@ module top;
     #(1000 * CLK_PERIOD);
     $display("Sorry! Ran out of clock cycles");
     $finish();
+  end
+  
+  // --- Generate Waveforms --- //
+  initial begin
+    $dumpfile("sim.vcd");
+    $dumpvars();
   end
   
 endmodule : top

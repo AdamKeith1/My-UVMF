@@ -1,34 +1,28 @@
 DUT:
-    Module: alu 
+    Module: alu
+    Dependencies:
+        Packages: 
+            alu_pkg.svh: alu_pkg
+        Includes:
     Parameters: 
-        BIT_WIDTH: 16 # specify 'PARAM: Value'
+        BIT_WIDTH: 16
     Ports:
         Clock: clk
         Active_Low_Reset: n_rst
         In: 
             opcode: '[1:0]'
-            a: '[(BIT_WIDTH-1):0]'
-            b: '[(BIT_WIDTH-1):0]'
+            a: '[(DATA_W-1):0]'
+            b: '[(DATA_W-1):0]'
         Out: 
-            c: '[(BIT_WIDTH-1):0]'
-
-Stimulus:
-    Constrained_Signals:
-        n_rst:
-        opcode:
-    # Sequnces with instance names
-    Sequences:
-        reset: 'reset_tx'
-        base: 'base_tx'
-
-Path:
+            out: '[(DATA_W-1):0]'
+            negative: ''
+            overflow: ''
+            zero: ''
 
 Testbench:
-    Clock: '4'
-    vcd: 'sim'
+    Modport:
 
-Dependencies:
-    Include:
-        alu_pkg.svh:
-    Import:
+Output_Path: alu/MyUVMF/
+
+
         

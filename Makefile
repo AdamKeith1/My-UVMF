@@ -1,4 +1,25 @@
 EXEC := generate.py
+SPEC := demo/alu.yaml
+
+# Detect the operating system
+UNAME_S := $(shell uname -s)
+
+# Set variables based on the OS
+ifeq ($(UNAME_S), Linux)
+	PIP    = pip3
+	PYTHON = python3
+	CLEAN_CMD = rm -rf
+else ifeq ($(UNAME_S), Darwin)
+	PIP    = pip3
+	PYTHON = python3
+	CLEAN_CMD = rm -rf
+else ifeq ($(OS), Windows_NT)
+	PIP    = pip
+	PYTHON = python
+	CLEAN_CMD = rmdir /S /Q
+else
+	$(error Unsupported operating system)
+endif
 
 define helpText
 -----------------------------------------------------------
@@ -16,7 +37,6 @@ Overview
 
 > testbench (generated)
     - houses generated UVM files
-    - TODO: make this configurable in spec
 
 - conifg.yaml
     - YAML spec for DUT and UVM features
@@ -56,18 +76,18 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf testbench
+	$(CLEAN_CMD) testbench
 
 .PHONY: startup
 startup:
-	pip3 install pyyaml
-	pip3 install jinja2
+	$(PIP) install pyyaml
+	$(PIP) install jinja2
 
 .PHONY: run
 run: startup
 	make clean
 
 	@echo "Creating test-bench directory..."
-	@mkdir testbench
+	mkdir testbench
 	@echo $${runText}
-	@python3 "${EXEC}"
+	$(PYTHON) "${EXEC}" $(SPEC)

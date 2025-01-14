@@ -1,13 +1,28 @@
-# --- Module --- #
-Design Under Test: alu 
-  Parameters:
-    # specify 'PARAM: Value'
-    BIT_WIDTH: 16 # specify 'PARAM: Value'
-  Ports:
-    Clock: clk
-    In:
-      opcode: 2
-      a: BIT_WIDTH
-      b: BIT_WIDTH
-    Out:
-      c: BIT_WIDTH
+## By default the alu demo YAML, more features to be added...
+##    - overhauling the YAML is a big Ver 2.0 target
+
+DUT:
+    Module: alu
+    Dependencies:
+        Packages: 
+            alu_pkg.svh: alu_pkg
+        Includes:
+    Parameters: 
+        DATA_W: 16
+    Ports:
+        Clock: clk
+        Active_Low_Reset: n_rst
+        In: 
+            opcode: '[1:0]'
+            a: '[(DATA_W-1):0]'
+            b: '[(DATA_W-1):0]'
+        Out: 
+            out: '[(DATA_W-1):0]'
+            negative: ''
+            overflow: ''
+            zero: ''
+
+Testbench:
+    Modport:
+
+Output_Path: alu/MyUVMF/

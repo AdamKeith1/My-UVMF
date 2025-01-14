@@ -1,20 +1,45 @@
-// --- Include --- //
-{% for file in Dependencies.Include -%}
+/*
+  Module        : {{ DUT.Module }}
+  UMV Component : driver
+  Author        : 
+*/
+
+`ifndef {{ DUT.Module | upper }}_DRIVER_SV
+`define {{ DUT.Module | upper }}_DRIVER_SV
+
+// --- UVM --- //
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+// --- Packages --- //
+{% if DUT.Dependencies.Packages -%}
+    {% for file, package in DUT.Dependencies.Packages.items() -%}
 `include "{{ file }}"
-{% endfor -%}
+import {{ package }}::*;
+    {% endfor -%}
+{% endif %}
+// --- Includes --- //
+`include "sequence_item.sv"
+`include "interface.sv"
+{% if DUT.Dependencies.Includes -%}
+    {% for include in DUT.Dependencies.Includes -%}
+`include "{{ include }}"
+    {% endfor -%}
+{% endif -%}
 {# Blank Line #}
+// --- Driver --- //
 class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item);
   `uvm_component_utils({{ DUT.Module }}_driver)
   
   // --- Virtual Interface + Sequence Item --- //
-  virtual {{ DUT.Module }}_interface vif;
+  virtual {{ DUT.Module }}_if vif;
   {{ DUT.Module }}_sequence_item item;
   
   // --- Constructor --- //
   function new(string name = "{{ DUT.Module }}_driver", uvm_component parent);
     super.new(name, parent);
     `uvm_info("DRIVER_CLASS", "Inside Constructor", UVM_HIGH)
-  endfunction: new
+  endfunction : new
   
   // --- Build Phase --- //
   function void build_phase(uvm_phase phase);
@@ -22,18 +47,11 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     `uvm_info("DRIVER_CLASS", "Build Phase", UVM_HIGH)
     
     // --- Virtual Interface Failure --- //
-    if(!(uvm_config_db #(virtual {{ DUT.Module }}_interface)::get(this, "*", "vif", vif))) begin
+    if(!(uvm_config_db #(virtual {{ DUT.Module }}_if)::get(this, "*", "vif", vif))) begin
       `uvm_error("DRIVER_CLASS", "Failed to get virtual interface")
     end
     
-  endfunction: build_phase
-  
-  // --- Connect Phase --- //
-  function void connect_phase(uvm_phase phase);
-    super.connect_phase(phase);
-    `uvm_info("DRIVER_CLASS", "Connect Phase", UVM_HIGH)
-    
-  endfunction: connect_phase
+  endfunction : build_phase
   
   // --- Run Phase --- //
   task run_phase (uvm_phase phase);
@@ -47,8 +65,7 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
       drive(item);
       seq_item_port.item_done();
     end
-    
-  endtask: run_phase
+  endtask : run_phase
   
   // --- Drive Virtual Interface --- //
   task drive({{ DUT.Module }}_sequence_item item);
@@ -68,6 +85,8 @@ class {{ DUT.Module }}_driver extends uvm_driver#({{ DUT.Module }}_sequence_item
     {% for port in ports -%}
     vif.{{ pad(port, max_len) }} <= item.{{ port }};
     {% endfor %}
-  endtask: drive
+  endtask : drive
   
-endclass: {{ DUT.Module }}_driver
+endclass : {{ DUT.Module }}_driver
+
+`endif

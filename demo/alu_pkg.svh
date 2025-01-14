@@ -10,7 +10,6 @@ package alu_pkg;
     // --- 
     typedef logic [DATA_W-1:0] data_t;
     
-    // TODO: remove some ops for scoreboard purposes
     typedef enum logic [OPCODE_W-1:0] {
         ALU_SLL     = 4'b0000,
         ALU_SRL     = 4'b0001,
